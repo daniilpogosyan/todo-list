@@ -1,0 +1,40 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%
+}
+
+
+.header {
+  /* so that child heading's margin won't push header down */
+  flex-shrink: 0;
+  overflow: auto;
+
+  color: #ffffff;
+  background-color: #7d0084;
+}
+
+.heading {
+  text-align: center;
+}
+
+.content {
+  flex: 1;
+  background-color: #f4e7ff;
+}
+
+
+.footer {
+  flex-shrink: 0;
+  background-color: #ffc0cb;
+}
+
+.copyright {
+  text-align: center;
+}
