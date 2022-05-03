@@ -21,6 +21,8 @@ addProjectBtn.addEventListener('click', () => {
 
 
 function viewProject(project) {
+  const DOMProject = document.createElement('div');
+
   console.log(project)
   const title = document.createElement("h3");
   title.textContent = project.title;
@@ -41,8 +43,14 @@ function viewProject(project) {
     return todoList
   })();
 
-  const DOMProject = document.createElement('div');
-  DOMProject.append(title, description, todoList);
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+
+  deleteBtn.addEventListener('click', 
+    () => pubsub.publish('project removed', project.id));
+
+  
+  DOMProject.append(title, deleteBtn, description, todoList);
   DOMProject.dataset.id = project.id;
 
   content.appendChild(DOMProject)
@@ -63,3 +71,6 @@ function createDOMTodo(todo) {
 }
 
 pubsub.subscribe('project added', viewProject)
+pubsub.subscribe('project removed', (id) => {
+  document.querySelector(`[data-id="${id}"]`).remove();
+})
