@@ -5,7 +5,7 @@ export default class Project {
   constructor(title, description) {
     this.title = title;
     this.description = description;
-    this.todos = [];
+    this.todos = [new Todo('task1'), new Todo('task2'), new Todo('task2')];
     Object.defineProperty(this, 'id', {
       value: getNewId(),
       writable: false,
