@@ -18,3 +18,14 @@ pubsub.subscribe('project removed',(id) => {
     projects.splice(removedIndex, 1)
   }
 })
+
+pubsub.subscribe('todo removed', (id) => {
+  for (let project of projects) {
+    if (project.removeTodo(id)) {
+      console.log('deleted from project')
+      break;
+    }
+
+  }
+  console.log(projects)
+})

@@ -36,7 +36,7 @@ function viewProject(project) {
     project.todos.forEach(todo => {
       const todoWrapper = document.createElement('li');
       todoWrapper.appendChild(createDOMTodo(todo));
-
+      todoWrapper.dataset.id = todo.id;
       todoList.appendChild(todoWrapper);
     });
 
@@ -62,15 +62,26 @@ function createDOMTodo(todo) {
 
   const check = document.createElement('input');
   check.type = 'checkbox';
-      
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+
+  deleteBtn.addEventListener('click', 
+    () => pubsub.publish('todo removed', todo.id));
+
   const DOMTodo = document.createElement('div');
-  DOMTodo.append(check, title);
+  DOMTodo.append(check, title, deleteBtn);
   DOMTodo.dataset.id = todo.id;
 
   return DOMTodo
 }
 
 pubsub.subscribe('project added', viewProject)
+
 pubsub.subscribe('project removed', (id) => {
+  document.querySelector(`[data-id="${id}"]`).remove();
+})
+
+pubsub.subscribe('todo removed', (id) => {
   document.querySelector(`[data-id="${id}"]`).remove();
 })
