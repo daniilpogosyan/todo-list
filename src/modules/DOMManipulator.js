@@ -1,6 +1,16 @@
 import * as base from "../base/base";
 import pubsub from './pubsub'
 import Project from './Project'
+import Todo from "./Todo";
+
+
+function todoWrap(todo) {
+  const todoWrapper = document.createElement('li');
+  todoWrapper.appendChild(createDOMTodo(todo));
+  todoWrapper.dataset.id = todo.id;
+
+  return todoWrapper
+}
 
 
 // Creating base structure of the page
@@ -24,6 +34,21 @@ function viewProject(project) {
   const DOMProject = document.createElement('div');
 
   console.log(project)
+  const newTodoInput = document.createElement('input');
+  const newTodoAddBtn = document.createElement('button')
+  newTodoAddBtn.textContent = 'Add';
+  newTodoAddBtn.addEventListener('click', () => {
+    if (!newTodoInput.value)
+      return
+
+    const newTodoTitle = newTodoInput.value;
+    const newTodo = new Todo(newTodoTitle);
+    pubsub.publish('todo added', project.id, newTodo);
+
+    newTodoInput.value = "";
+  })
+
+
   const title = document.createElement("h3");
   title.textContent = project.title;
   
@@ -34,9 +59,7 @@ function viewProject(project) {
     const todoList = document.createElement('ul');
 
     project.todos.forEach(todo => {
-      const todoWrapper = document.createElement('li');
-      todoWrapper.appendChild(createDOMTodo(todo));
-      todoWrapper.dataset.id = todo.id;
+      const todoWrapper = todoWrap(todo);
       todoList.appendChild(todoWrapper);
     });
 
@@ -50,7 +73,7 @@ function viewProject(project) {
     () => pubsub.publish('project removed', project.id));
 
   
-  DOMProject.append(title, deleteBtn, description, todoList);
+  DOMProject.append(title, deleteBtn, newTodoInput, newTodoAddBtn, description, todoList);
   DOMProject.dataset.id = project.id;
 
   content.appendChild(DOMProject)
@@ -82,6 +105,10 @@ pubsub.subscribe('project removed', (id) => {
   document.querySelector(`[data-id="${id}"]`).remove();
 })
 
+pubsub.subscribe('todo added', (projectId, todo) => {
+  const project = document.querySelector(`[data-id="${projectId}"] ul`);
+  project.appendChild(todoWrap(todo))
+})
 pubsub.subscribe('todo removed', (id) => {
   document.querySelector(`[data-id="${id}"]`).remove();
 })

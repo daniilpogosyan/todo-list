@@ -29,3 +29,8 @@ pubsub.subscribe('todo removed', (id) => {
   }
   console.log(projects)
 })
+
+pubsub.subscribe('todo added', (projectId, todo) => {
+  const targetProject = projects.find(project => project.id == projectId);
+  targetProject.addTodo(todo);
+})
