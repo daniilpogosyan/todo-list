@@ -2,15 +2,9 @@ import '../base/pageLoader'
 import pubsub from './pubsub'
 import Project from './Project'
 import Todo from "./Todo";
+import { WrapInLi } from './utility';
 
 
-function todoWrap(todo) {
-  const todoWrapper = document.createElement('li');
-  todoWrapper.appendChild(createDOMTodo(todo));
-  todoWrapper.dataset.id = todo.id;
-
-  return todoWrapper
-}
 
 
 // Creating base structure of the page
@@ -54,8 +48,10 @@ function viewProject(project) {
     const todoList = document.createElement('ul');
 
     project.todos.forEach(todo => {
-      const todoWrapper = todoWrap(todo);
-      todoList.appendChild(todoWrapper);
+      const wrappedTodo = WrapInLi(createDOMTodo(todo), {
+        'data-id':`${todo.id}`,
+      });
+      todoList.appendChild(wrappedTodo);
     });
 
     return todoList
@@ -71,7 +67,7 @@ function viewProject(project) {
   DOMProject.append(title, deleteBtn, newTodoInput, newTodoAddBtn, description, todoList);
   DOMProject.dataset.id = project.id;
 
-  content.appendChild(DOMProject)
+  content.prepend(DOMProject)
 }
 
 function createDOMTodo(todo) {
@@ -102,8 +98,12 @@ pubsub.subscribe('project removed', (id) => {
 
 pubsub.subscribe('todo added', (projectId, todo) => {
   const project = document.querySelector(`[data-id="${projectId}"] ul`);
-  project.appendChild(todoWrap(todo))
+  const wrappedTodo = WrapInLi(createDOMTodo(todo), {
+    'data-id': todo.id,
+  });
+  project.appendChild(wrappedTodo)
 })
+
 pubsub.subscribe('todo removed', (id) => {
   document.querySelector(`[data-id="${id}"]`).remove();
 })
