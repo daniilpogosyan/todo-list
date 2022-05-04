@@ -33,6 +33,8 @@ export function createSideProjBar() {
 
   const projects = document.createElement('nav');
   const projectList = document.createElement('ul');
+  projectList.classList.add('project-list');
+
   projects.appendChild(projectList);
 
   sidebar.appendChild(projects);

@@ -9,14 +9,38 @@ import { WrapInLi } from './utility';
 
 // Creating base structure of the page
 const content = document.getElementById('content');
+const sidebar = (() => {
+  const sidebar = document.querySelector('.project-list');
 
+  const addProjectBtn = document.createElement('button');
+  addProjectBtn.textContent = "New Project";
+  sidebar.appendChild(addProjectBtn);
+  addProjectBtn.addEventListener('click', () => {
+    pubsub.publish('project added', new Project("TEST PROJECT",'You should finish this project by tomorrow' ))
+  })
 
-const addProjectBtn = document.createElement('button');
-addProjectBtn.textContent = "New Project";
-content.appendChild(addProjectBtn);
-addProjectBtn.addEventListener('click', () => {
-  pubsub.publish('project added', new Project("TEST PROJECT",'You should finish this project by tomorrow' ))
-})
+  const addProject = (project) => {
+    const projectName  = document.createElement('p');
+    projectName.textContent = project.title;
+
+    const wrapper = WrapInLi(projectName, {
+      'data-id': project.id,
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+  
+    deleteBtn.addEventListener('click', 
+      () => pubsub.publish('project removed', project.id));
+
+    wrapper.append(deleteBtn)
+
+    sidebar.append(wrapper);
+  }
+    
+
+  pubsub.subscribe('project added', addProject)
+})();
 
 
 function viewProject(project) {
@@ -67,7 +91,7 @@ function viewProject(project) {
   DOMProject.append(title, deleteBtn, newTodoInput, newTodoAddBtn, description, todoList);
   DOMProject.dataset.id = project.id;
 
-  content.prepend(DOMProject)
+  content.appendChild(DOMProject)
 }
 
 function createDOMTodo(todo) {
@@ -92,8 +116,11 @@ function createDOMTodo(todo) {
 
 pubsub.subscribe('project added', viewProject)
 
+// it should queryselectorAll because project render itself both in content
+// and sidebar
 pubsub.subscribe('project removed', (id) => {
-  document.querySelector(`[data-id="${id}"]`).remove();
+  const idOwners = document.querySelectorAll(`[data-id="${id}"]`);
+  idOwners.forEach(idOwner =>idOwner.remove())
 })
 
 pubsub.subscribe('todo added', (projectId, todo) => {
