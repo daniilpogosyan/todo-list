@@ -2,9 +2,6 @@
 // such as header, footer etc
 
 
-import './base.css'
-
-
 export function createHeader() {
   const header = document.createElement('header');
   header.classList.add('header');
@@ -29,6 +26,18 @@ export function createFooter() {
   footer.appendChild(copyright);
   
   return footer;
+}
+
+export function createSideProjBar() {
+  const sidebar = document.createElement('div');
+
+  const projects = document.createElement('nav');
+  const projectList = document.createElement('ul');
+  projects.appendChild(projectList);
+
+  sidebar.appendChild(projects);
+  
+  return sidebar
 }
 
 export function createContent() {

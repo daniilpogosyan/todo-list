@@ -5,16 +5,15 @@ html, body {
 }
 
 body {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 100px 1fr 100px;
+  grid-template-columns: 200px 1fr;
   height: 100%
 }
 
 
 .header {
-  /* so that child heading's margin won't push header down */
-  flex-shrink: 0;
-  overflow: auto;
+  grid-column: 1 / -1;
 
   color: #ffffff;
   background-color: #7d0084;
@@ -31,7 +30,7 @@ body {
 
 
 .footer {
-  flex-shrink: 0;
+  grid-column: 1 / -1;
   background-color: #ffc0cb;
 }
 

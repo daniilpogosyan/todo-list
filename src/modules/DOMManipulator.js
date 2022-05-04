@@ -1,4 +1,4 @@
-import * as base from "../base/base";
+import '../base/pageLoader'
 import pubsub from './pubsub'
 import Project from './Project'
 import Todo from "./Todo";
@@ -14,12 +14,7 @@ function todoWrap(todo) {
 
 
 // Creating base structure of the page
-const header = base.createHeader();
-const content = base.createContent();
-const footer = base.createFooter();
-document.body.append(header)
-document.body.append(content)
-document.body.append(footer)
+const content = document.getElementById('content');
 
 
 const addProjectBtn = document.createElement('button');
