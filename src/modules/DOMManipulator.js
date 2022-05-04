@@ -22,6 +22,9 @@ const sidebar = (() => {
   const addProject = (project) => {
     const projectName  = document.createElement('p');
     projectName.textContent = project.title;
+    projectName.addEventListener('click', () => {
+      pubsub.publish('project requested', project.id)
+    })
 
     const wrapper = WrapInLi(projectName, {
       'data-id': project.id,
@@ -37,13 +40,16 @@ const sidebar = (() => {
 
     sidebar.append(wrapper);
   }
-    
+
+  pubsub.subscribe('project passed', viewProject)
 
   pubsub.subscribe('project added', addProject)
 })();
 
 
 function viewProject(project) {
+  content.textContent = "";
+
   const DOMProject = document.createElement('div');
 
   console.log(project)

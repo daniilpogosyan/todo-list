@@ -34,3 +34,6 @@ pubsub.subscribe('todo added', (projectId, todo) => {
   const targetProject = projects.find(project => project.id == projectId);
   targetProject.addTodo(todo);
 })
+pubsub.subscribe('project requested', (projectId) => {
+  pubsub.publish('project passed', projects.find(project => project.id == projectId))
+})
