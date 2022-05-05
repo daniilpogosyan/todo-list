@@ -28,8 +28,9 @@ export function createFooter() {
   return footer;
 }
 
-export function createSideProjBar() {
+export function createSideBar() {
   const sidebar = document.createElement('div');
+  sidebar.id = 'sidebar';
 
   const projects = document.createElement('nav');
   const projectList = document.createElement('ul');
