@@ -54,3 +54,14 @@ pubsub.subscribe('todo-name changed', (todoId, newName) => {
     }
   }
 })
+
+pubsub.subscribe('todo-check-status changed', (todoId, isChecked) => {
+  console.log('todo renamed')
+  for (let project of projects) {
+    const targetTodo = project.todos.find(todo => todo.id == todoId)
+    if (targetTodo) {
+      targetTodo.done = isChecked;
+      return
+    }
+  }
+})

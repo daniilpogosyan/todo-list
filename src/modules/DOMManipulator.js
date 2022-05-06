@@ -16,6 +16,7 @@ const content = (() => {
   
     const check = document.createElement('input');
     check.type = 'checkbox';
+    check.checked = todo.done;
   
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'Delete';
@@ -29,6 +30,10 @@ const content = (() => {
 
     title.addEventListener('change', () => {
       pubsub.publish('todo-name changed', todo.id, title.value);
+    })
+
+    check.addEventListener('change', () => {
+      pubsub.publish('todo-check-status changed', todo.id, check.checked);
     })
   
     return DOMTodo
