@@ -11,8 +11,8 @@ const content = (() => {
   const content = document.getElementById('content');
 
   function _createDOMTodo(todo) {
-    const title = document.createElement('h4');
-    title.textContent = todo.title;
+    const title = document.createElement('input');
+    title.value = todo.title;
   
     const check = document.createElement('input');
     check.type = 'checkbox';
@@ -26,6 +26,10 @@ const content = (() => {
     const DOMTodo = document.createElement('div');
     DOMTodo.append(check, title, deleteBtn);
     DOMTodo.dataset.id = todo.id;
+
+    title.addEventListener('change', () => {
+      pubsub.publish('todo-name changed', todo.id, title.value);
+    })
   
     return DOMTodo
   }
@@ -48,8 +52,11 @@ const content = (() => {
     })
   
   
-    const title = document.createElement("h3");
-    title.textContent = project.title;
+    const title = document.createElement("input");
+    title.value = project.title;
+    title.addEventListener('change', () => {
+      pubsub.publish('project-name changed', project.id, title.value)
+    })
     
     const description = document.createElement('p');
     description.textContent = project.description;
@@ -175,7 +182,12 @@ const sidebar = (() => {
     
       pubsub.subscribe('project added', addProject);
       pubsub.subscribe('project removed', removeProject);
-    
+      pubsub.subscribe('project-name changed', (projectId, newName) => {
+        console.log('renamed')
+        const targetProject = DOMProjectList.querySelector(`[data-id="${projectId}"] p`);
+        targetProject.textContent = newName;
+      })
+
       return DOMProjectList
     }
 

@@ -37,3 +37,20 @@ pubsub.subscribe('todo added', (projectId, todo) => {
 pubsub.subscribe('project requested', (projectId) => {
   pubsub.publish('project passed', projects.find(project => project.id == projectId))
 })
+
+
+pubsub.subscribe('project-name changed', (projectId, newName) => {
+  const targetProject = projects.find(project => project.id == projectId);
+  targetProject.title = newName;
+})
+
+pubsub.subscribe('todo-name changed', (todoId, newName) => {
+  console.log('todo renamed')
+  for (let project of projects) {
+    const targetTodo = project.todos.find(todo => todo.id == todoId)
+    if (targetTodo) {
+      targetTodo.title = newName;
+      return
+    }
+  }
+})
