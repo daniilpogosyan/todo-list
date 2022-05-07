@@ -4,6 +4,7 @@ import Project from './Project'
 import Todo from "./Todo";
 import { WrapInLi } from './utility';
 import '../stylesheets/sidebar.css';
+import '../stylesheets/content.css';
 
 // object that handle content section of DOM:
 // displaying project,
@@ -12,19 +13,23 @@ const content = (() => {
 
   function _createDOMTodo(todo) {
     const title = document.createElement('input');
+    title.classList.add('todo-item__title')
     title.value = todo.title;
   
     const check = document.createElement('input');
+    check.classList.add('todo-item__check')
     check.type = 'checkbox';
     check.checked = todo.done;
   
     const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('todo-item__delete-btn')
+    deleteBtn.textContent = 'x';
   
     deleteBtn.addEventListener('click', 
       () => pubsub.publish('todo removed', todo.id));
   
-    const DOMTodo = document.createElement('div');
+    const DOMTodo = document.createElement('li');
+    DOMTodo.classList.add('todo-list__todo-item');
     DOMTodo.append(check, title, deleteBtn);
     DOMTodo.dataset.id = todo.id;
 
@@ -41,10 +46,19 @@ const content = (() => {
 
   function _createDOMProject(project) {
     const DOMProject = document.createElement('div');
+    DOMProject.classList.add('project-contents')
   
     const newTodoInput = document.createElement('input');
+    newTodoInput.classList.add('todo-adder__new-project-input');
+    newTodoInput.placeholder = "what are you going to do?"
+    newTodoInput.addEventListener('keypress', (e) => {
+      if (e.key == 'Enter') {
+        newTodoAddBtn.click();
+      }
+    })
     const newTodoAddBtn = document.createElement('button')
     newTodoAddBtn.textContent = 'Add';
+    newTodoAddBtn.classList.add('todo-adder__new-project-btn')
     newTodoAddBtn.addEventListener('click', () => {
       if (!newTodoInput.value)
         return
@@ -59,39 +73,48 @@ const content = (() => {
   
     const title = document.createElement("input");
     title.value = project.title;
+    title.classList.add('project-header__title');
     title.addEventListener('change', () => {
       pubsub.publish('project-name changed', project.id, title.value)
     })
     
     const description = document.createElement('p');
     description.textContent = project.description;
+    description.classList.add('project-header__description')
     
     const todoList = (function() {
       const todoList = document.createElement('ul');
+      todoList.classList.add('project-contents__todo-list');
   
       project.todos.forEach(todo => {
-        const wrappedTodo = WrapInLi(_createDOMTodo(todo), {
-          'data-id':`${todo.id}`,
-        });
-        todoList.appendChild(wrappedTodo);
+        const DOMTodo =  _createDOMTodo(todo);
+        todoList.appendChild(DOMTodo);
       });
   
       return todoList
     })();
   
     const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('project-contents__delete-project-btn')
+    deleteBtn.textContent = 'Delete Project';
   
     deleteBtn.addEventListener('click', 
       () => pubsub.publish('project removed', project.id));
-      
+
+    const todoAdder = document.createElement('div');
+    todoAdder.append(newTodoInput, newTodoAddBtn);
+    todoAdder.classList.add('project-contents__todo-adder')
+    
+    const header = document.createElement('div');
+    header.append(title, description);
+    header.classList.add('project-contents__project-header')
+
     DOMProject.append(
-      title,
+      header,
+      todoAdder,
+      todoList,
       deleteBtn,
-      newTodoInput,
-      newTodoAddBtn,
-      description,
-      todoList);
+      );
   
     DOMProject.dataset.id = project.id;
   

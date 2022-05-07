@@ -1,0 +1,119 @@
+.project-contents {
+  margin: 20px;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #e9d5ff;
+}
+
+
+.project-contents__project-header {
+  max-width: 1000px;
+}
+.project-header__title {
+  display: block;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  max-width: 700px;
+  font-size: 50px;
+  font-weight: 800;
+}
+.project-header__title:focus {
+  background-color: #0001;
+  border-bottom: 1px solid #000;
+  margin-bottom: -1px;
+}
+
+.project-header__description {
+  color: #444;
+}
+
+.project-contents__todo-adder {
+  display: flex;
+  gap: 30px;
+  max-width: 1000px;
+}
+
+.project-contents__delete-project-btn {
+  display: block;
+  margin-left: auto;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #581c87;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer; 
+  opacity: 0.2;
+}
+.project-contents__delete-project-btn:hover {
+  opacity: 1;
+}
+
+.todo-adder__new-project-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #000;
+  background-color: #0001;
+  outline: none;
+  font-size: 24px;
+}
+.todo-adder__new-project-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #581c87;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer; 
+}
+.todo-adder__new-project-btn:active {
+  background-color: #9333ea;
+}
+
+
+.project-contents__todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-list__todo-item {
+  display: flex;
+  align-items: center;
+  max-width: 800px;
+  font-size: 20px;
+}
+.todo-list__todo-item + .todo-list__todo-item {
+  margin-top: 1em;
+}
+.todo-item__title {
+  flex: 1;
+  display: block;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: inherit;
+}
+.todo-item__title:focus {
+  background-color: #0001;
+  border-bottom: 1px solid #000;
+  margin-bottom: -1px;
+}
+
+.todo-item__check {
+  width: 20px;
+  height: 20px;
+  accent-color: #9333ea;
+}
+
+.todo-item__delete-btn {
+  opacity: 0.2;
+  border: none;
+  border-radius: 50%;
+  background-color: #581c87;
+  color: #fff;
+  cursor: pointer;
+}
+.todo-list__todo-item:hover > .todo-item__delete-btn {
+  opacity: 1;
+}
