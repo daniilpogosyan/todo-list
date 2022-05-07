@@ -1,0 +1,73 @@
+.sidebar {
+  padding: 50px 0;
+  background-color: #8b5cf6;
+}
+
+
+.project-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.new-project-btn {
+  border: none;
+  background-color: #fff4;
+  color: #fff;
+  cursor: pointer;
+}
+.new-project-btn:active {
+  background-color: #aaa4;
+}
+.new-project-btn::after {
+  content: "+";
+  font-size: 2em;
+}
+
+
+.new-project-btn,
+.project-list__project {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  height: 40px;
+  width: 100%;
+  padding: 10px 10px 10px 20px;
+  font-weight: 800;
+}
+
+
+.project-list__project{
+  color: #fff;
+}
+.project-list__project:hover {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  background-color: #6d28d9;
+  cursor: pointer;
+}
+
+
+.project-list__delete-btn {
+  visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 1.5em;
+  width: 1.5em;
+  border: none;
+  border-radius: 50%;
+  background-color: #fff8;
+  color: red;
+  cursor: pointer;
+}
+.project-list__project:hover .project-list__delete-btn {
+  visibility: visible;
+}
+
+.project-list__delete-btn:active  {
+  background-color: #ddd8;
+}

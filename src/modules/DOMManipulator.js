@@ -3,7 +3,7 @@ import pubsub from './pubsub'
 import Project from './Project'
 import Todo from "./Todo";
 import { WrapInLi } from './utility';
-
+import '../stylesheets/sidebar.css';
 
 // object that handle content section of DOM:
 // displaying project,
@@ -148,35 +148,48 @@ const content = (() => {
 const sidebar = (() => {
   const sidebar = document.getElementById('sidebar');
 
-    function createDOMProjectList(){
-      const DOMProjectList = document.createElement('ul');
-  
-      const addProjectBtn = document.createElement('button');
-      addProjectBtn.textContent = "New Project";
-      DOMProjectList.appendChild(addProjectBtn);
-      addProjectBtn.addEventListener('click', () => {
+    function createNewProjectBtn() {
+      console.log('new proj')
+      const newProjectBtn = document.createElement('button');
+      newProjectBtn.classList.add('new-project-btn')
+      newProjectBtn.textContent = "New Project";
+      newProjectBtn.addEventListener('click', () => {
         pubsub.publish('project added', new Project("TEST PROJECT",'You should finish this project by tomorrow' ))
       })
-    
+      return newProjectBtn
+    }
+
+    function createDOMProjectList(){
+      const wrapperDOMProjectList = document.createElement('div')
+      const DOMProjectList = document.createElement('ul');
+      DOMProjectList.classList.add('project-list');
+  
+      
       const addProject = (project) => {
-        const projectName  = document.createElement('p');
+        const projectName  = document.createElement('span');
         projectName.textContent = project.title;
-        projectName.addEventListener('click', () => {
-          pubsub.publish('project requested', project.id)
-        })
-    
+        
         const wrapper = WrapInLi(projectName, {
           'data-id': project.id,
         });
-    
+        wrapper.classList.add('project-list__project');
         const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete';
+        deleteBtn.classList.add('project-list__delete-btn')
+        deleteBtn.textContent = 'X';
         deleteBtn.addEventListener('click', 
-          () => pubsub.publish('project removed', project.id));
-    
+        () => pubsub.publish('project removed', project.id));
+        
         wrapper.append(deleteBtn)
-    
-        DOMProjectList.append(wrapper);
+
+        wrapper.addEventListener('click', (e) => {
+          // prevent requesting project when clicking on delete button, 
+          // which reside inside the wrapper
+          if (e.target != deleteBtn)
+            pubsub.publish('project requested', project.id)
+        })
+        
+        
+        DOMProjectList.prepend(wrapper);
       }
 
       const removeProject = (id) => {
@@ -189,19 +202,25 @@ const sidebar = (() => {
       pubsub.subscribe('project removed', removeProject);
       pubsub.subscribe('project-name changed', (projectId, newName) => {
         console.log('renamed')
-        const targetProject = DOMProjectList.querySelector(`[data-id="${projectId}"] p`);
+        const targetProject = DOMProjectList
+        .querySelector(`[data-id="${projectId}"] span`);
         targetProject.textContent = newName;
       })
 
       return DOMProjectList
     }
 
-    function viewProjectList() {
-      console.log(sidebar)
-      sidebar.append(createDOMProjectList());
+    function viewProjectManager() {
+      const projectManager = document.createElement('div')
+      projectManager.classList.add('project-manager');
+      projectManager.append(
+        createNewProjectBtn(),
+        createDOMProjectList(),
+        );
+      sidebar.append(projectManager);
     }
-
-    viewProjectList();
+    
+    viewProjectManager();
 
 
 })();

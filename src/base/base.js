@@ -30,15 +30,8 @@ export function createFooter() {
 
 export function createSideBar() {
   const sidebar = document.createElement('div');
+  sidebar.classList.add('sidebar');
   sidebar.id = 'sidebar';
-
-  const projects = document.createElement('nav');
-  const projectList = document.createElement('ul');
-  projectList.classList.add('project-list');
-
-  projects.appendChild(projectList);
-
-  sidebar.appendChild(projects);
   
   return sidebar
 }
