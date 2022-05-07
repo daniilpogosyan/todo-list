@@ -173,6 +173,14 @@ const sidebar = (() => {
           'data-id': project.id,
         });
         wrapper.classList.add('project-list__project');
+        
+        const highlightProject = () => {
+          DOMProjectList.querySelectorAll('li').forEach((wrapper) => {
+            wrapper.classList.remove('project-list__project--selected')
+          })
+          wrapper.classList.add('project-list__project--selected')
+        }
+
         const deleteBtn = document.createElement('button');
         deleteBtn.classList.add('project-list__delete-btn')
         deleteBtn.textContent = 'X';
@@ -184,11 +192,16 @@ const sidebar = (() => {
         wrapper.addEventListener('click', (e) => {
           // prevent requesting project when clicking on delete button, 
           // which reside inside the wrapper
-          if (e.target != deleteBtn)
-            pubsub.publish('project requested', project.id)
+          if (e.target == deleteBtn)
+            return
+          
+          highlightProject()
+          
+
+          pubsub.publish('project requested', project.id)
         })
         
-        
+        highlightProject()
         DOMProjectList.prepend(wrapper);
       }
 

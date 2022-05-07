@@ -42,12 +42,17 @@
 
 .project-list__project{
   color: #fff;
+  cursor: pointer;
 }
 .project-list__project:hover {
+  background-color: #7c3aed;
+}
+/* it was necessary to use two classes to override  
+bgc from `.project-list__project:hover` selector*/
+.project-list__project.project-list__project--selected {
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   background-color: #6d28d9;
-  cursor: pointer;
 }
 
 
