@@ -106,6 +106,17 @@
   accent-color: #9333ea;
 }
 
+.todo-item__due-time {
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+.todo-item__due-time:focus {
+  background-color: #0001;
+  border-bottom: 1px solid #000;
+  margin-bottom: -1px;
+}
+
 .todo-item__delete-btn {
   opacity: 0.2;
   border: none;

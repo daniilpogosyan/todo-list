@@ -20,6 +20,11 @@ const content = (() => {
     check.classList.add('todo-item__check')
     check.type = 'checkbox';
     check.checked = todo.done;
+
+    const dueTime = document.createElement('input');
+    dueTime.classList.add('todo-item__due-time');
+    dueTime.type = 'date';
+    dueTime.valueAsDate = todo.dueTime;
   
     const deleteBtn = document.createElement('button');
     deleteBtn.classList.add('todo-item__delete-btn')
@@ -30,8 +35,9 @@ const content = (() => {
   
     const DOMTodo = document.createElement('li');
     DOMTodo.classList.add('todo-list__todo-item');
-    DOMTodo.append(check, title, deleteBtn);
+    DOMTodo.append(check, title, dueTime, deleteBtn);
     DOMTodo.dataset.id = todo.id;
+
 
     title.addEventListener('change', () => {
       pubsub.publish('todo-name changed', todo.id, title.value);
@@ -39,6 +45,10 @@ const content = (() => {
 
     check.addEventListener('change', () => {
       pubsub.publish('todo-check-status changed', todo.id, check.checked);
+    })
+
+    dueTime.addEventListener('change', () => {
+      pubsub.publish('todo-due-time changed', todo.id, dueTime.valueAsDate);
     })
   
     return DOMTodo
