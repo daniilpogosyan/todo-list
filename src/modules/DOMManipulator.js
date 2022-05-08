@@ -98,10 +98,13 @@ const content = (() => {
       pubsub.publish('project-name changed', project.id, title.value)
     })
     
-    const description = document.createElement('p');
-    description.textContent = project.description;
+    const description = document.createElement('textarea');
+    description.value = project.description;
     description.classList.add('project-header__description')
-    
+    description.addEventListener('change', () => {
+      pubsub.publish('project-description changed', project.id, description.value)
+    })
+
     const todoList = (function() {
       const todoList = document.createElement('ul');
       todoList.classList.add('project-contents__todo-list');

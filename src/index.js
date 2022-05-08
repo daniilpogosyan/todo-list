@@ -38,6 +38,10 @@ pubsub.subscribe('project requested', (projectId) => {
   pubsub.publish('project passed', projects.find(project => project.id == projectId))
 })
 
+pubsub.subscribe('project-description changed', (projectId, newDescription) => {
+  const targetProject = projects.find(project => project.id == projectId);
+  targetProject.description = newDescription;
+})
 
 pubsub.subscribe('project-name changed', (projectId, newName) => {
   const targetProject = projects.find(project => project.id == projectId);

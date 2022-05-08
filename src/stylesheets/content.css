@@ -25,7 +25,20 @@
 }
 
 .project-header__description {
+  resize: none;
+  width: 600px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
   color: #444;
+  outline-offset: 5px;
+}
+.project-header__description:focus {
+  outline-width: 1px;
+  background-color: #0001;
+}
+.project-header__description::-webkit-scrollbar {
+  display: none;
 }
 
 .project-contents__todo-adder {
