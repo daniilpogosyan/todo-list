@@ -82,13 +82,23 @@
   align-items: center;
   max-width: 800px;
   font-size: 20px;
+  gap: 40px;
 }
 .todo-list__todo-item + .todo-list__todo-item {
   margin-top: 1em;
 }
+
+.todo-item__left-side {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+}
+.todo-item__right-side {
+  display: flex;
+  gap: 20px;
+}
 .todo-item__title {
   flex: 1;
-  display: block;
   background-color: transparent;
   border: none;
   outline: none;
@@ -125,6 +135,6 @@
   color: #fff;
   cursor: pointer;
 }
-.todo-list__todo-item:hover > .todo-item__delete-btn {
+.todo-list__todo-item:hover .todo-item__delete-btn {
   opacity: 1;
 }

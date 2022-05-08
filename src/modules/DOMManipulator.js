@@ -35,7 +35,17 @@ const content = (() => {
   
     const DOMTodo = document.createElement('li');
     DOMTodo.classList.add('todo-list__todo-item');
-    DOMTodo.append(check, title, dueTime, deleteBtn);
+
+
+    const todoItemLeftSide = document.createElement('div');
+    todoItemLeftSide.classList.add('todo-item__left-side');
+    todoItemLeftSide.append(check, title);
+
+    const todoItemRightSide = document.createElement('div');
+    todoItemRightSide.classList.add('todo-item__right-side');
+    todoItemRightSide.append(dueTime, deleteBtn);
+
+    DOMTodo.append(todoItemLeftSide, todoItemRightSide);
     DOMTodo.dataset.id = todo.id;
 
 
@@ -99,6 +109,7 @@ const content = (() => {
       project.todos.forEach(todo => {
         const DOMTodo =  _createDOMTodo(todo);
         todoList.appendChild(DOMTodo);
+        console.log('todo is added')
       });
   
       return todoList
@@ -159,10 +170,8 @@ const content = (() => {
 
   pubsub.subscribe('todo added', (projectId, todo) => {
     const project = document.querySelector(`[data-id="${projectId}"] ul`);
-    const wrappedTodo = WrapInLi(_createDOMTodo(todo), {
-      'data-id': todo.id,
-    });
-    project.appendChild(wrappedTodo);
+    const wrappedTodo = _createDOMTodo(todo);
+    project.prepend(wrappedTodo);
   });
 
   pubsub.subscribe('todo removed', (id) => {
