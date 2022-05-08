@@ -2,12 +2,12 @@ import Todo from './Todo'
 import {getNewId} from './utility'
 
 export default class Project {
-  constructor(title, description) {
+  constructor(title, description, id) {
     this.title = title;
     this.description = description;
-    this.todos = [new Todo('task1'), new Todo('task2'), new Todo('task2')];
+    this.todos = [];
     Object.defineProperty(this, 'id', {
-      value: getNewId(),
+      value: id != undefined? id : getNewId(),
       writable: false,
     })
   }
