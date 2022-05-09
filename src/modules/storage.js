@@ -1,5 +1,6 @@
 import Project from "./Project";
 import Todo from "./Todo";
+import pubsub from './pubsub';
 
 const storageManager = (() => {
   function _storageAvailable(type) {
@@ -80,3 +81,71 @@ const storageManager = (() => {
 
   return {store, remove, revive}
 })();
+
+
+pubsub.subscribe('project added', (project) => {
+  storageManager.store(project);
+})
+
+
+pubsub.subscribe('project removed',(projectId) => {
+  storageManager.remove(projectId);
+})
+
+
+pubsub.subscribe('todo removed', (projectId, todoId) => {
+  const targetProject = storageManager.revive(projectId);
+  targetProject.removeTodo(todoId);
+  storageManager.store(targetProject);
+})
+
+
+pubsub.subscribe('todo added', (projectId, todo) => {
+  console.log(todo)
+  const targetProject = storageManager.revive(projectId);
+  targetProject.addTodo(todo);
+  storageManager.store(targetProject);
+})
+
+
+pubsub.subscribe('project requested', (projectId) => {
+  pubsub.publish('project passed', storageManager.revive(projectId))
+})
+
+
+pubsub.subscribe('project-description changed', (projectId, newDescription) => {
+  const targetProject = storageManager.revive(projectId);
+  targetProject.description = newDescription;
+  storageManager.store(targetProject);
+})
+
+
+pubsub.subscribe('project-name changed', (projectId, newName) => {
+  const targetProject = storageManager.revive(projectId);
+  targetProject.title = newName;
+  storageManager.store(targetProject);
+})
+
+
+pubsub.subscribe('todo-name changed', (projectId, todoId, newName) => {
+  const targetProject = storageManager.revive(projectId);
+  const targetTodo = targetProject.todos.find(todo => todo.id == todoId);
+  targetTodo.title = newName;
+  storageManager.store(targetProject);
+})
+
+
+pubsub.subscribe('todo-check-status changed', (projectId, todoId, isChecked) => {
+  const targetProject = storageManager.revive(projectId);
+  const targetTodo = targetProject.todos.find(todo => todo.id == todoId);
+  targetTodo.done = isChecked;
+  storageManager.store(targetProject);
+})
+
+
+pubsub.subscribe('todo-due-time changed', (projectId, todoId, dueTime) => {
+  const targetProject = storageManager.revive(projectId);
+  const targetTodo = targetProject.todos.find(todo => todo.id == todoId);
+  targetTodo.dueTime = dueTime;
+  storageManager.store(targetProject);
+})

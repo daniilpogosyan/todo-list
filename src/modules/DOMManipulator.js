@@ -11,7 +11,7 @@ import '../stylesheets/content.css';
 const content = (() => {
   const content = document.getElementById('content');
 
-  function _createDOMTodo(todo) {
+  function _createDOMTodo(projectId, todo) {
     const title = document.createElement('input');
     title.classList.add('todo-item__title')
     title.value = todo.title;
@@ -31,7 +31,7 @@ const content = (() => {
     deleteBtn.textContent = 'x';
   
     deleteBtn.addEventListener('click', 
-      () => pubsub.publish('todo removed', todo.id));
+      () => pubsub.publish('todo removed', projectId, todo.id));
   
     const DOMTodo = document.createElement('li');
     DOMTodo.classList.add('todo-list__todo-item');
@@ -50,15 +50,15 @@ const content = (() => {
 
 
     title.addEventListener('change', () => {
-      pubsub.publish('todo-name changed', todo.id, title.value);
+      pubsub.publish('todo-name changed', projectId, todo.id, title.value);
     })
 
     check.addEventListener('change', () => {
-      pubsub.publish('todo-check-status changed', todo.id, check.checked);
+      pubsub.publish('todo-check-status changed', projectId, todo.id, check.checked);
     })
 
     dueTime.addEventListener('change', () => {
-      pubsub.publish('todo-due-time changed', todo.id, dueTime.valueAsDate);
+      pubsub.publish('todo-due-time changed', projectId, todo.id, dueTime.valueAsDate);
     })
   
     return DOMTodo
@@ -110,7 +110,7 @@ const content = (() => {
       todoList.classList.add('project-contents__todo-list');
   
       project.todos.forEach(todo => {
-        const DOMTodo =  _createDOMTodo(todo);
+        const DOMTodo =  _createDOMTodo(project.id, todo);
         todoList.appendChild(DOMTodo);
         console.log('todo is added')
       });
@@ -173,12 +173,12 @@ const content = (() => {
 
   pubsub.subscribe('todo added', (projectId, todo) => {
     const project = document.querySelector(`[data-id="${projectId}"] ul`);
-    const wrappedTodo = _createDOMTodo(todo);
+    const wrappedTodo = _createDOMTodo(projectId, todo);
     project.prepend(wrappedTodo);
   });
 
-  pubsub.subscribe('todo removed', (id) => {
-    document.querySelector(`[data-id="${id}"]`).remove();
+  pubsub.subscribe('todo removed', (projectId, todoId) => {
+    document.querySelector(`[data-id="${todoId}"]`).remove();
   })
 
   pubsub.subscribe('project removed', removeProject);
