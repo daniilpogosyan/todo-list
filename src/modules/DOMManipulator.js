@@ -264,6 +264,7 @@ const sidebar = (() => {
         .querySelector(`[data-id="${projectId}"] span`);
         targetProject.textContent = newName;
       })
+      pubsub.subscribe('project restored', addProject);
 
       return DOMProjectList
     }

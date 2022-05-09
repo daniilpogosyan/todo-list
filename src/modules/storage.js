@@ -149,3 +149,13 @@ pubsub.subscribe('todo-due-time changed', (projectId, todoId, dueTime) => {
   targetTodo.dueTime = dueTime;
   storageManager.store(targetProject);
 })
+
+
+window.addEventListener('DOMContentLoaded', () => {
+  const projectsIDs = Object.keys(sessionStorage);
+  
+  projectsIDs.forEach(projectId => {
+    const project = storageManager.revive(projectId);
+    pubsub.publish('project restored', project);
+  })
+})
