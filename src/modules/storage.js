@@ -67,10 +67,11 @@ const storageManager = (() => {
       console.log("todo is restored")
       const todo = new Todo(
         todoData.title,
-        todoData.done,
         todoData.priority,
-        todoData.id
-      );
+        todoData.done,
+        todoData.id,
+        new Date(todoData.dueTime),
+        );
       project.addTodo(todo);
     })
 
