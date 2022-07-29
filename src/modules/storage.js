@@ -28,7 +28,7 @@ const storageManager = (() => {
     }
   }
 
-  let _storageType = "sessionStorage";
+  let _storageType = "localStorage";
   function _getStorage() {
     if (_storageAvailable(_storageType))
       return window[_storageType];
@@ -152,8 +152,7 @@ pubsub.subscribe('todo-due-time changed', (projectId, todoId, dueTime) => {
 
 
 window.addEventListener('DOMContentLoaded', () => {
-  const projectsIDs = Object.keys(sessionStorage);
-  
+  const projectsIDs = Object.keys(localStorage);
   projectsIDs.forEach(projectId => {
     const project = storageManager.revive(projectId);
     pubsub.publish('project restored', project);
