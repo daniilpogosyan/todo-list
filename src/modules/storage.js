@@ -1,63 +1,42 @@
 import Project from "./Project";
 import Todo from "./Todo";
 import pubsub from './pubsub';
+import { getFirebaseConfig } from './firebaseConfig';
+import { initializeApp } from 'firebase/app';
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  deleteDoc,
+  getDoc,
+  getDocs,
+} from 'firebase/firestore';
 
+const app = initializeApp(getFirebaseConfig());
+
+const db = getFirestore();
+const projectCollection = collection(db, 'projects');
 const storageManager = (() => {
-  function _storageAvailable(type) {
-    var storage;
-    try {
-        storage = window[type];
-        var x = '__storage_test__';
-        storage.setItem(x, x);
-        storage.removeItem(x);
-        return true;
-    }
-    catch(e) {
-        return e instanceof DOMException && (
-            // everything except Firefox
-            e.code === 22 ||
-            // Firefox
-            e.code === 1014 ||
-            // test name field too, because code might not be present
-            // everything except Firefox
-            e.name === 'QuotaExceededError' ||
-            // Firefox
-            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-            // acknowledge QuotaExceededError only if there's something already stored
-            (storage && storage.length !== 0);
-    }
-  }
-
-  let _storageType = "localStorage";
-  function _getStorage() {
-    if (_storageAvailable(_storageType))
-      return window[_storageType];
-  }
-
-  function _getProjectAsJSON(projectId) {
-    return _getStorage()[projectId];
-  }
 
   function store(project) {
-    const storage = _getStorage();
-    storage[project.id] = JSON.stringify(project);
+    const projectRef = doc(projectCollection, `${project.id}`)
+    setDoc(projectRef, JSON.parse(JSON.stringify(project)))
+      .then(() => console.log('project is saved in firestore'))
+      .catch(err => console.log(err.message));
   }
 
   function remove(projectId) {
-    const storage = _getStorage();
-    storage.removeItem(projectId);
+    const projectRef = doc(projectCollection, `${projectId}`);
+    deleteDoc(projectRef)
+      .then(() => console.log('project is removed from firestore'))
+      .catch(err => console.log(err.message));
   }
 
-  function revive(projectId) {
-    const projectJSON = _getProjectAsJSON(projectId);
-    if (!projectJSON) {
-      console.log(`project by id = ${projectId} cannot be accessed`);
-      return
-    }
-
-    console.log('projectJSON', projectJSON)
-    const projectData = JSON.parse(projectJSON);
-
+  async function revive(projectId) {
+    const docRef = doc(db, 'projects', `${projectId}`);
+    const docSnapshot = await getDoc(docRef);
+    const projectData = docSnapshot.data();
     const project = new Project(
       projectData.title,
       projectData.description,
@@ -83,78 +62,76 @@ const storageManager = (() => {
 })();
 
 
-pubsub.subscribe('project added', (project) => {
+pubsub.subscribe('project added', async (project) => {
   storageManager.store(project);
 })
 
 
-pubsub.subscribe('project removed',(projectId) => {
+pubsub.subscribe('project removed', async (projectId) => {
   storageManager.remove(projectId);
 })
 
 
-pubsub.subscribe('todo removed', (projectId, todoId) => {
-  const targetProject = storageManager.revive(projectId);
+pubsub.subscribe('todo removed', async (projectId, todoId) => {
+  const targetProject = await storageManager.revive(projectId);
   targetProject.removeTodo(todoId);
   storageManager.store(targetProject);
 })
 
 
-pubsub.subscribe('todo added', (projectId, todo) => {
-  console.log(todo)
-  const targetProject = storageManager.revive(projectId);
+pubsub.subscribe('todo added', async (projectId, todo) => {
+  const targetProject = await storageManager.revive(projectId);
   targetProject.addTodo(todo);
   storageManager.store(targetProject);
 })
 
 
-pubsub.subscribe('project requested', (projectId) => {
-  pubsub.publish('project passed', storageManager.revive(projectId))
+pubsub.subscribe('project requested', async (projectId) => {
+  pubsub.publish('project passed', await storageManager.revive(projectId))
 })
 
 
-pubsub.subscribe('project-description changed', (projectId, newDescription) => {
-  const targetProject = storageManager.revive(projectId);
+pubsub.subscribe('project-description changed', async (projectId, newDescription) => {
+  const targetProject = await storageManager.revive(projectId);
   targetProject.description = newDescription;
   storageManager.store(targetProject);
 })
 
 
-pubsub.subscribe('project-name changed', (projectId, newName) => {
-  const targetProject = storageManager.revive(projectId);
+pubsub.subscribe('project-name changed', async (projectId, newName) => {
+  const targetProject = await storageManager.revive(projectId);
   targetProject.title = newName;
   storageManager.store(targetProject);
 })
 
 
-pubsub.subscribe('todo-name changed', (projectId, todoId, newName) => {
-  const targetProject = storageManager.revive(projectId);
+pubsub.subscribe('todo-name changed', async (projectId, todoId, newName) => {
+  const targetProject = await storageManager.revive(projectId);
   const targetTodo = targetProject.todos.find(todo => todo.id == todoId);
   targetTodo.title = newName;
   storageManager.store(targetProject);
 })
 
 
-pubsub.subscribe('todo-check-status changed', (projectId, todoId, isChecked) => {
-  const targetProject = storageManager.revive(projectId);
+pubsub.subscribe('todo-check-status changed', async (projectId, todoId, isChecked) => {
+  const targetProject = await storageManager.revive(projectId);
   const targetTodo = targetProject.todos.find(todo => todo.id == todoId);
   targetTodo.done = isChecked;
   storageManager.store(targetProject);
 })
 
 
-pubsub.subscribe('todo-due-time changed', (projectId, todoId, dueTime) => {
-  const targetProject = storageManager.revive(projectId);
+pubsub.subscribe('todo-due-time changed', async (projectId, todoId, dueTime) => {
+  const targetProject = await storageManager.revive(projectId);
   const targetTodo = targetProject.todos.find(todo => todo.id == todoId);
   targetTodo.dueTime = dueTime;
   storageManager.store(targetProject);
 })
 
 
-window.addEventListener('DOMContentLoaded', () => {
-  const projectsIDs = Object.keys(localStorage);
-  projectsIDs.forEach(projectId => {
-    const project = storageManager.revive(projectId);
-    pubsub.publish('project restored', project);
+window.addEventListener('DOMContentLoaded', async () => {  
+  const projects = await getDocs(projectCollection);
+  projects.forEach(project => {
+    pubsub.publish('project restored', {...project.data(), id: project.id});
   })
 })
